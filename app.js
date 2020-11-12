@@ -1,5 +1,5 @@
 /**
- * Example store structure
+  store structure
  */
 const store = {
   // 5 or more questions are required
@@ -62,39 +62,47 @@ function startPage() {
       <form>
         <button class="js-start-button" type="submit">Start Quiz</button>
       </form>
-    </div>`
+    </div>`;
 }
 
 function questionPage(questionIndex) {
   // This function returns the basic HTML template of the question pages.
   // Returns 2 <h3>s in the header and a div, p, and form/inputs inside the <main></main>
+
   store.questionNumber = questionIndex;
-  
 
   return `
     <div>
       <h4>Question Number: ${questionIndex + 1}/${store.questions.length}</h4>
-      <h4>Score: /${store.questions.length}</h4>
+      <h4>Score: ${store.score}/${store.questions.length}</h4>
       <p>Question: ${store.questions[questionIndex].question}</p>
       <form action="" method="post">
-        <label><input type="radio" required="required" name="option" value="${store.questions[questionIndex].answers[0]}"/> ${store.questions[questionIndex].answers[0]}</label>
-        <label><input type="radio" required="required" name="option" value="${store.questions[questionIndex].answers[1]}"/>  ${store.questions[questionIndex].answers[1]}</label>
-        <label><input type="radio" required="required" name="option" value="${store.questions[questionIndex].answers[2]}"/>  ${store.questions[questionIndex].answers[2]}</label>
-        <label><input type="radio" required="required" name="option" value="${store.questions[questionIndex].answers[3]}"/>  ${store.questions[questionIndex].answers[3]}</label>
+        <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[0]}" required/> ${store.questions[questionIndex].answers[0]}</label>
+        <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[1]}" required/>  ${store.questions[questionIndex].answers[1]}</label>
+        <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[2]}" required/>  ${store.questions[questionIndex].answers[2]}</label>
+        <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[3]}" required/>  ${store.questions[questionIndex].answers[3]}</label>
         <input class="js-submit-button" type="submit"/>
      </form>  
-    </div>`
+    </div>`;
     
 }
 
-function feedbackPage(questionIndex) {
-  // This function returns the basic HTML template when the user submits an incorrect answer.
+function feedbackPage() {
+  // This function returns the basic HTML template when the user submits an incorrect answer
   // Returns a div, p (Incorrect. You should watch this movie!), an image of the movie, and a form/input button to move to the next question inside <main>
-  score = store.score;
- 
-  html = '';
   
-  if ($('input[name=option]:checked').val() === this.correctAnswer) {
+  // Selects the value of the checked radio button
+  radioValue = $('input[name="option"]:checked').val();
+
+  // Selects the current question's correct answer
+  correctAnswer = store.questions[store.questionNumber].correctAnswer;
+
+  // Updates the score IF they got the answer correct
+
+  
+  html = '';
+
+  if (radioValue === correctAnswer) {
     html = `
       <div>
         <h2>Correct! 🙂 </h2> 
@@ -102,11 +110,13 @@ function feedbackPage(questionIndex) {
           <button class="js-next-button" type="submit">Next</button>
         </form>
       </div>`
-      score += 1;
+      store.score += 1;
   } else {
     html = `
       <div>
-          <h2>Incorrect. 🙁 You should watch ${store.questions[questionIndex].question}!</h2> 
+          <h2>Incorrect. 🙁</h2>
+          <p>The correct answer is <i>${correctAnswer}</i>.</p> 
+          
           <form>
             <button class="js-next-button" type="submit">Next</button>
           </form>
@@ -124,80 +134,76 @@ function completedQuizPage() {
     
     <div>
       <h3>Quiz is complete!</h3>
-      <p>Total Score: /${store.questions.length}</p>
+      <p>Total Score: ${store.score}/${store.questions.length}</p>
       <form action="" method="POST">
         <button class="js-restart-button">Restart Quiz</button>
       </form>  
-    </div>`
+    </div>`;
 }
-
-
-/*******HELPER FUNCTIONS*******/
-
-function calculateTotalScore() {
-  // This function will display the total correct answers out of 5 on the completedQuizPage
-
-  
-}
-
-function calculateAnswerStatus() {
-  // This function will caculate if the checked radio button is true or not and return the corresponding alert page.
-
-
-}
-
-
-
 
 
 /********** EVENT HANDLER FUNCTIONS **********/
-
 // These functions handle events (submit, click, etc)
+
+
 function handleStartQuizButton() {
+  // This button is found on the startPage.
+  // It will take you to the first questionPage()
+
   console.log('handStartQuzButton called');
-  // This button is found on the startPage. 
-  // It will take you to the first questionPage().
+
   $('main').on('click', '.js-start-button', function(e) {
     e.preventDefault();
     store.quizStarted = true;
     renderHTML($('main'), questionPage(0));
-  })
+  });
 }
 
 function handleSubmitAnswerButton() {
+  // This button will take you to the correctAlertPage or incorrectAlertPage
+
   console.log('handleSubmitAnswerButton called');
-  // This button will take you to the correctAlertPage or incorrectAlertPage.
+
   $('main').on('click', '.js-submit-button', function(e) {
-  e.preventDefault();
-  renderHTML($('main'), feedbackPage());
-  })
+    e.preventDefault();
+
+    // Requires that an option has been selected in order to submit the answer
+    if ($('input:radio[name=option]').is(':checked')) {
+      renderHTML($('main'), feedbackPage());
+    } else {
+      alert('Please select an option!');
+    }
+  
+  });
 }
 
 function handleNextQuestionButton() {
+  // This button will take you to the next question object in the store array
+
   console.log('handleNextQuestionButton called');
-  // This button will take you to the next question object in the store array.
+  
   $('main').on('click', '.js-next-button', function(e) {
     e.preventDefault();
 
-
-
+    // Points to another questionPage OR the completedQuizPage, depending on the current questionNumber and the total questions in store
     if (store.questionNumber + 1 < store.questions.length) {
       renderHTML($('main'), questionPage(store.questionNumber + 1));
     }
     else if (store.questionNumber + 1 >= store.questions.length) {
       renderHTML($('main'), completedQuizPage());
     }
-    
-   
-  })
+  });
 }
 
 function handleRestartQuizButton() {
+  // This button will reset the html template back to the startPage() and clear the score and question tracker
+
   console.log('handleRestartQuizButton called');
-  // This button will reset the html template back to the startPage() and clear the score and question tracker.
+  
   $('main').on('click', '.js-restart-button', function(e) {
     e.preventDefault();
     renderHTML($('main'), startPage());
+    store.score = 0;
     })
 }
 
@@ -214,6 +220,8 @@ function renderHTML(container, content) {
 };
 
 
+
+
 /******INIT FUNCTION*****/
 function init() {
   console.log('init called');
@@ -222,7 +230,6 @@ function init() {
   handleSubmitAnswerButton();
   handleNextQuestionButton();
   handleRestartQuizButton();
-  
 }
 
 

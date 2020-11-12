@@ -12,6 +12,7 @@
   background-color: #495057;
   padding-top: 20px;
   font-family: 'Times New Roman', Times, serif;
+  overflow-x: scroll;
 }
 
 div {
@@ -21,6 +22,7 @@ div {
   width: 75%;
   background-color: white;
 }
+
 
 form {
   background-color: white;
@@ -55,6 +57,11 @@ h3 {
   margin-top: 0;
   margin-bottom: 0;
   font-size: x-large;
+}
+
+i {
+  background-color: white;
+  color: #495057;
 }
 
 label {
