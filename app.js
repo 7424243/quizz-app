@@ -53,9 +53,12 @@ const store = {
 /********** TEMPLATE GENERATION FUNCTIONS **********/
 
 // These functions return HTML templates
+
+
 function startPage() {
   // This function returns the initial starting page.
   // Returns a div, p, and form/input inside the <main></main>
+
   return `
     <div>
       <p>Instructions: Read the quote and select the movie that the quote is from.</p>
@@ -76,13 +79,14 @@ function questionPage(questionIndex) {
       <h4>Question Number: ${questionIndex + 1}/${store.questions.length}</h4>
       <h4>Score: ${store.score}/${store.questions.length}</h4>
       <p>Question: ${store.questions[questionIndex].question}</p>
+      <h4 id="selectOption" hidden>***Please select an option!***</h4> 
       <form action="" method="post">
         <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[0]}" required/> ${store.questions[questionIndex].answers[0]}</label>
         <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[1]}" required/>  ${store.questions[questionIndex].answers[1]}</label>
         <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[2]}" required/>  ${store.questions[questionIndex].answers[2]}</label>
         <label><input type="radio" name="option" value="${store.questions[questionIndex].answers[3]}" required/>  ${store.questions[questionIndex].answers[3]}</label>
         <input class="js-submit-button" type="submit"/>
-     </form>  
+     </form> 
     </div>`;
     
 }
@@ -171,7 +175,7 @@ function handleSubmitAnswerButton() {
     if ($('input:radio[name=option]').is(':checked')) {
       renderHTML($('main'), feedbackPage());
     } else {
-      alert('Please select an option!');
+      $('#selectOption').show();
     }
   
   });
@@ -216,6 +220,7 @@ function handleRestartQuizButton() {
 //content: String
 function renderHTML(container, content) {
   // This function conditionally replaces the contents of the <main> tag based on the state of the store
+  
   container.html(content);
 };
 
